@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:airline/ApiService.dart';
 import 'package:airline/bookinginfo.dart';
 import 'package:airline/model/login_model.dart';
@@ -16,12 +18,13 @@ class _loginState extends State<login> {
   String email='';
  GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
-
+  late PwResetRequestModel pwrequestModel;
  late LoginRequestModel requestModel;
  @override
  void initState(){
    super.initState();
    requestModel = new LoginRequestModel();
+   pwrequestModel = new PwResetRequestModel();
  }
 
   void pwreset() {
@@ -31,7 +34,7 @@ class _loginState extends State<login> {
         builder: (context) {
           return AlertDialog(
             content: Container(
-              height: 220,
+              height: 250,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -41,7 +44,7 @@ class _loginState extends State<login> {
                     Text('Password Reset',style: TextStyle(
                       color: Color(0xff2699fb),fontSize: 18,fontWeight: FontWeight.bold
                     ),),
-                    Text('We have send password  rest link \nin your registered email.Please click on the lnk for resetting your password',
+                    Text('We have send password reset link in ${pwrequestModel.email}.Please click on the lnk for resetting your password',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         height: 2.0,
@@ -51,6 +54,9 @@ class _loginState extends State<login> {
                     GestureDetector(
                       onTap: (){
                         verif_resend();
+                        Future.delayed(const Duration(milliseconds: 1000), () {
+                          Navigator.pop(context);
+                        });
                       },
                       child: Text('\nDidn\'t recieve the link? Click here to resend ',
                         textAlign: TextAlign.center,
@@ -152,8 +158,11 @@ class _loginState extends State<login> {
 
                     GestureDetector(
                       onTap: (){
-                        verif_resend();
-                      },
+                      verif_resend();
+                      Future.delayed(const Duration(milliseconds: 1000), () {
+                        Navigator.pop(context);
+                      });
+                    },
                       child: Text('Didn\'t recieve the link? Click here to resend ',
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -228,9 +237,11 @@ class _loginState extends State<login> {
                     ),
                     onChanged: (val){
                       setState(()=>email =val);
+                      pwrequestModel.email =val;
                     },
                     onSaved: (input ){
                       requestModel.email =input;
+
                     },
                   ),
                   SizedBox(height: 20.0,),
@@ -258,8 +269,33 @@ class _loginState extends State<login> {
                     padding: const EdgeInsets.all(20.0),
                     child: GestureDetector(
                       onTap: (){
-                        pwreset();
-                        },
+
+
+                        APIService  apiService = new APIService();
+                        apiService.reset(pwrequestModel).then((value)async{
+                          value.fold(
+                                (l) {
+                                  pwreset();
+                                  Future.delayed(const Duration(milliseconds: 2500), () {
+                                    Navigator.pop(context);
+                                  });
+                              final snackBar = SnackBar(
+                                  backgroundColor: Color(0xff2699fb),
+                                  content:Text(' ${l.msg.toString()}\nYour code is :  ${l.code.toString()}'));
+                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            },
+                                (r) {
+                              final snackBar = SnackBar(
+                                  backgroundColor: Color(0xff2699fb),
+                                  content:Text('${r.Errors?[0].msg}'));
+                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                            },
+                          );
+                        }
+                        );
+
+                      },
                       child: Text('Forgot your password ? Click here' ,
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -284,7 +320,6 @@ class _loginState extends State<login> {
                           if(validateandsave()){
                             APIService  apiService = new APIService();
                             apiService.login(requestModel).then((value)async{
-                              print(value);
                              value.fold(
                                     (l) {
 
@@ -292,6 +327,16 @@ class _loginState extends State<login> {
                                           backgroundColor: Color(0xff2699fb),
                                           content:Text('Welcome ${l.user1?.firstName.toString()} ${l.user1?.lastName.toString()}'));
                                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                            verification();
+                                            Timer(const Duration(seconds: 5), (){
+                                              Navigator.push(context,
+                                                    MaterialPageRoute(builder:
+                                                    (context) => bookinginfo()
+                                                )
+                                            );}
+                                        );
+
+
                                 },
                                     (r) {
                                       final snackBar = SnackBar(
@@ -304,18 +349,6 @@ class _loginState extends State<login> {
                             }
                               );
                          }
-
-
-
-
-                          // verification();
-                          // Timer(const Duration(seconds: 1),
-                          //         ()=>Navigator.push(context,
-                          //         MaterialPageRoute(builder:
-                          //             (context) => bookinginfo()
-                          //         )
-                          //     )
-                          // );
                         }
                     ),
                   ),

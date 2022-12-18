@@ -69,3 +69,45 @@ class LoginRequestModel {
     return map;
   }
 }
+
+class PwResetResponseModel_failure {
+  List<Message>? Errors;
+  PwResetResponseModel_failure({ this.Errors});
+
+  factory PwResetResponseModel_failure.fromJson(Map<String, dynamic> parsedJson){ //implement constructors that do not produce new instances of an existing class.
+    List<Message>? MessagesList;
+    var list = parsedJson['errors'] as List;
+    MessagesList = list.map((i) => Message.fromJson(i)).toList();
+
+    return PwResetResponseModel_failure(
+        Errors: MessagesList != null ? MessagesList : []
+    );
+  }
+}
+
+class PwResetResponseModel_success {
+  int? code;
+  String? msg;
+
+  PwResetResponseModel_success ({this.msg,this.code});
+
+  factory PwResetResponseModel_success .fromJson(Map<String, dynamic> parsedJson){ //implement constructors that do not produce new instances of an existing class.
+    return PwResetResponseModel_success (
+      msg: parsedJson['msg'] != null ? parsedJson['msg'] :"Login First" ,
+      code: parsedJson['code'] != null ? parsedJson['code'] :"Login First" ,
+    );
+  }
+}
+
+class PwResetRequestModel {
+  String? email;
+
+  PwResetRequestModel ({ this.email});
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> map = {
+      'email': email!.trim(),
+    };
+    return map;
+  }
+}
