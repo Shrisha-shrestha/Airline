@@ -283,19 +283,24 @@ class _loginState extends State<login> {
                         onPressed: (){
                           if(validateandsave()){
                             APIService  apiService = new APIService();
-                            apiService.login(requestModel).then((value){
-                                if(value.Errors![0].msg!=null){
-                                  final snackBar = SnackBar(
-                                    backgroundColor: Color(0xff2699fb),
-                                    content:Text(value.Errors![0].msg.toString()),);
-                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                }
-                                  else{
-                                    final snackBar = SnackBar(
-                                      backgroundColor: Color(0xff2699fb),
-                                      content:Text(value.token.toString()),);
-                                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                            }
+                            apiService.login(requestModel).then((value)async{
+                              print(value);
+                             value.fold(
+                                    (l) {
+
+                                        final snackBar = SnackBar(
+                                          backgroundColor: Color(0xff2699fb),
+                                          content:Text('Welcome ${l.user1?.firstName.toString()} ${l.user1?.lastName.toString()}'));
+                                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                },
+                                    (r) {
+                                      final snackBar = SnackBar(
+                                        backgroundColor: Color(0xff2699fb),
+                                          content:Text('${r.Errors?[0].msg}'));
+                                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                                    },
+                              );
                             }
                               );
                          }

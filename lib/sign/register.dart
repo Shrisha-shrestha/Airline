@@ -2,6 +2,9 @@ import 'package:airline/home/homescreen.dart';
 import 'package:airline/sign/login.dart';
 import 'package:flutter/material.dart';
 
+import '../ApiService.dart';
+import '../model/register_model.dart';
+
 class register extends StatefulWidget {
   const register({Key? key}) : super(key: key);
 
@@ -16,7 +19,7 @@ class _registerState extends State<register> {
   final _formkey = GlobalKey<FormState>();
   void verification() {
     showDialog(
-        barrierColor: Color(0xff2699fb).withOpacity(0.3),
+        barrierColor: Color(0xff2699fb).withOpacity(0.6),
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -67,7 +70,7 @@ class _registerState extends State<register> {
   }
   void verif_resend() {
     showDialog(
-        barrierColor: Color(0xff2699fb).withOpacity(0.3),
+        barrierColor: Color(0xff2699fb).withOpacity(0.6),
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -116,6 +119,12 @@ class _registerState extends State<register> {
           );
         });
   }
+  late RegisterRequestModel requestModel;
+  @override
+  void initState(){
+    super.initState();
+    requestModel = new RegisterRequestModel();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,33 +165,61 @@ class _registerState extends State<register> {
                     validator:(val)=>val!.isEmpty ? 'Enter a valid name': null,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide( color: Color(0xff2699fb).withOpacity(0.4)),
+                        borderSide: BorderSide( color: Color(0xff2699fb).withOpacity(0.6)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide( color: Theme.of(context).primaryColor),
                       ),
-                      labelText: 'Full Name',
-                      labelStyle: TextStyle(color: Color(0xff2699fb).withOpacity(0.4)),
+                      labelText: 'First Name',
+                      labelStyle: TextStyle(color: Color(0xff2699fb).withOpacity(0.6)),
                     ),
                     onChanged: (val){
                       setState(()=>name =val);
                     },
+                    onSaved: (input ){
+                      requestModel.firstName =input;
+                    },
+
+                  ),
+                  SizedBox(height: 20.0,),
+                  TextFormField(
+                    validator:(val)=>val!.isEmpty ? 'Enter a valid name': null,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide( color: Color(0xff2699fb).withOpacity(0.6)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide( color: Theme.of(context).primaryColor),
+                      ),
+                      labelText: 'Last Name',
+                      labelStyle: TextStyle(color: Color(0xff2699fb).withOpacity(0.6)),
+                    ),
+                    onChanged: (val){
+                      setState(()=>name =val);
+                    },
+                    onSaved: (input ){
+                      requestModel.lastName =input;
+                    },
+
                   ),
                   SizedBox(height: 20.0,),
                   TextFormField(
                     validator:(val)=> val!.isEmpty ? 'Enter an email': null,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide( color: Color(0xff2699fb).withOpacity(0.4)),
+                        borderSide: BorderSide( color: Color(0xff2699fb).withOpacity(0.6)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Theme.of(context).primaryColor),
                       ),
                       labelText: 'Email',
-                      labelStyle: TextStyle(color: Color(0xff2699fb).withOpacity(0.4)),
+                      labelStyle: TextStyle(color: Color(0xff2699fb).withOpacity(0.6)),
                     ),
                     onChanged: (val){
                       setState(()=>email =val);
+                    },
+                    onSaved: (input ){
+                      requestModel.email =input;
                     },
                   ),
                   SizedBox(height: 20.0,),
@@ -190,17 +227,20 @@ class _registerState extends State<register> {
                     validator:(val)=> val!.length<6 ? 'Enter a  password 6 characters long': null,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide( color: Color(0xff2699fb).withOpacity(0.4)),
+                        borderSide: BorderSide( color: Color(0xff2699fb).withOpacity(0.6)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide( color: Theme.of(context).primaryColor),
                       ),
                       labelText: 'Password',
-                      labelStyle: TextStyle(color: Color(0xff2699fb).withOpacity(0.4)),
+                      labelStyle: TextStyle(color: Color(0xff2699fb).withOpacity(0.6)),
                     ),
                     obscureText: true,
                     onChanged: (val){
                       setState(()=>password =val);
+                    },
+                    onSaved: (input ){
+                      requestModel.password =input;
                     },
                   ),
                   Padding(
@@ -224,8 +264,31 @@ class _registerState extends State<register> {
                           child: Text('REGISTER ',style: TextStyle(fontSize: 15.0,color: Colors.white),),
                         ),
                         onPressed: (){
-                          _formkey.currentState!.validate();
-                          verification() ;
+
+                          if(validateandsave()){
+                            APIService  apiService = new APIService();
+                            apiService.register(requestModel).then((value)async{
+                              value.fold(
+                                    (l) {
+                                      final snackBar = SnackBar(
+                                          backgroundColor: Color(0xff2699fb),
+                                          content:Text('Registration Successful!\nWelcome ${l.user1?.firstName.toString()} ${l.user1?.lastName.toString()}'));
+                                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                },
+                                    (r) {
+                                  final snackBar = SnackBar(
+                                      backgroundColor: Color(0xff2699fb),
+                                      content:Text('${r.Errors?[0].msg}'));
+                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                                },
+                              );
+                            }
+                            );
+                          }
+
+                          // _formkey.currentState!.validate();
+                          // verification() ;
                           //showDataAlert();
                         }
                     ),
@@ -258,4 +321,16 @@ class _registerState extends State<register> {
       ),
     );
   }
+
+  bool validateandsave(){
+    final form = _formkey.currentState!;
+    if(form.validate()){
+      form.save();
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
 }
