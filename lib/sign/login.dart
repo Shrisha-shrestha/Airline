@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:airline/ApiService.dart';
 import 'package:airline/bookinginfo.dart';
+import 'package:airline/home/homescreen.dart';
 import 'package:airline/model/login_model.dart';
 import 'package:airline/sign/register.dart';
 import 'package:flutter/material.dart';
@@ -331,7 +332,7 @@ class _loginState extends State<login> {
                                             Timer(const Duration(seconds: 5), (){
                                               Navigator.push(context,
                                                     MaterialPageRoute(builder:
-                                                    (context) => bookinginfo()
+                                                    (context) => HomeScreen()
                                                 )
                                             );}
                                         );

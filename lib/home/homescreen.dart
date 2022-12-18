@@ -1,3 +1,4 @@
+import 'package:airline/ApiService.dart';
 import 'package:airline/home/availabletickets.dart';
 import 'package:airline/profile/profile.dart';
 import 'package:flutter/material.dart';
@@ -95,12 +96,31 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(right: 12.0),
             child: IconButton(
               onPressed: (){
-                Navigator.push(context,
-                    MaterialPageRoute(builder:
-                        (context) => profile()
-                    )
+                APIService  apiService = new APIService();
+                apiService.profile().then((value)async{
+                  value.fold(
+                        (l) {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder:
+                                  (context) => profile(
+                                    fname:l.profiles[0].firstName.toString(),
+                                    lname: l.profiles[0].lastName.toString(),
+                                    email: l.profiles[0].email.toString(),)
+                              )
+                          );
+                          //send  ${l.profiles[0].firstName.toString()} to  profile page
+                        },
+                        (r) {
+                      final snackBar = SnackBar(
+                          backgroundColor: Color(0xff2699fb),
+                          content:Text('${r.msg}'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    },
+                  );
+                }
                 );
-              },
+
+                },
               icon: Icon(Icons.account_circle,color: Color(0xff2699fb),size: 30.0,),
             ),
           )

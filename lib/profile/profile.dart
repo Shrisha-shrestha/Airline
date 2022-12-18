@@ -1,11 +1,14 @@
 import 'package:airline/profile/edit.dart';
 import 'package:airline/profile/invoice.dart';
 import 'package:airline/profile/issued_tickets.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 
 class profile extends StatefulWidget {
-  const profile({Key? key}) : super(key: key);
-
+String fname;
+String  lname;
+String email;
+profile({required this.fname,required this.lname,required this.email});
   @override
   State<profile> createState() => _profileState();
 }
@@ -124,7 +127,7 @@ class _profileState extends State<profile> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width*0.45,
+                  width: MediaQuery.of(context).size.width*0.5,
                   //height: 62.0,
                   height: MediaQuery.of(context).size.height*0.08,
                   child: Row(
@@ -138,12 +141,12 @@ class _profileState extends State<profile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text("John Doe",
+                          Text("${widget.fname} ${widget.lname}",
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: Color(0xff2699fb),),),
-                          Text("San Fransico, CA",
+                          Text("${widget.email}",
                             style: TextStyle(
                               fontSize: 15,
                               color: Color(0xff2699fb),),),
