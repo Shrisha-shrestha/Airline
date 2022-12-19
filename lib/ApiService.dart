@@ -53,7 +53,7 @@ class APIService{
     }
   }
 
-  Future<Either<ProfileResponseModel_success,ProfileResponseModel_failure>> profile()async{
+  Future<Either<ProfileResponseModel_success,ProfileResponseModel_failure>> profile(String token)async{
     final String url = 'http://3.109.218.205/api/v1/auth';
     final Map<String, String> tokenData = {
       "Postman-Token":"<calculated when request is sent>",
@@ -62,7 +62,7 @@ class APIService{
       "Accept":"*/*",
       "Accept-Encoding":"gzip, deflate, br",
       "Connection":"keep-alive",
-      "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjozfSwiaWF0IjoxNjcxMzQxOTc0LCJleHAiOjE2NzE3MDE5NzR9.3tqOQWxHTPtnrbJd55k-7-07uHKCFAFPeLBk_wlCRYM",
+      "x-auth-token": token.toString(),
     };
     final response = await http.get(Uri.parse(url),headers: tokenData,);
     print(response.statusCode);

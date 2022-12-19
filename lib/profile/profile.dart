@@ -134,7 +134,7 @@ class _profileState extends State<profile> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CircleAvatar(
-                        radius: 28.0 ,
+                        radius: 24.0 ,
                         backgroundImage:  AssetImage('assets/pp.png',),
                       ),
                       Column(
@@ -148,7 +148,7 @@ class _profileState extends State<profile> {
                               color: Color(0xff2699fb),),),
                           Text("${widget.email}",
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 10,
                               color: Color(0xff2699fb),),),
                         ],
                       ),
@@ -242,7 +242,29 @@ class _profileState extends State<profile> {
                 ),
               ],
             ),
-              )
+              ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Color(0xff2699fb)),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      side: BorderSide(width: 2, color: Color(0xff2699fb),),
+                    ),
+                  ),
+                ),
+                onPressed: () {
+
+                },
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 7.0),
+                    child: Text( 'Log out',
+                      style: TextStyle(color: Colors.white,fontSize: 12.0),)
+                ),
+              ),
+            ),
           ],
         ),
       ),

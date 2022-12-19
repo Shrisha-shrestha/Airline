@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
+String token;
+HomeScreen({required this.token});
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: IconButton(
               onPressed: (){
                 APIService  apiService = new APIService();
-                apiService.profile().then((value)async{
+                apiService.profile(widget.token).then((value)async{
                   value.fold(
                         (l) {
                           Navigator.push(context,

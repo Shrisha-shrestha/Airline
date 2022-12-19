@@ -332,7 +332,7 @@ class _loginState extends State<login> {
                                             Timer(const Duration(seconds: 5), (){
                                               Navigator.push(context,
                                                     MaterialPageRoute(builder:
-                                                    (context) => HomeScreen()
+                                                    (context) => HomeScreen(token: l.token.toString(),)
                                                 )
                                             );}
                                         );
