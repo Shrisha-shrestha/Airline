@@ -151,7 +151,7 @@ class _flightsearchState extends State<flightsearch> {
                 child: GestureDetector(
                   onTap: (){
 
-                    Navigator.push(context,MaterialPageRoute(builder: (context) => login()));
+                    Navigator.push(context,MaterialPageRoute(builder: (context) => bookinginfo()));
 
                   },
                   child: ListView(

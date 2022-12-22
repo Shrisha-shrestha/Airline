@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:airline/home/homescreen.dart';
 import 'package:airline/sign/login.dart';
 import 'package:airline/sign/register.dart';
+import 'package:airline/test.dart';
 import 'package:flutter/material.dart';
 
 
@@ -35,10 +36,9 @@ class SplashScreenState extends State<MyHomePage> {
     Timer(const Duration(seconds: 2),
             ()=>Navigator.push(context,
             MaterialPageRoute(builder:
-                (context) => login()
+                (context) => login())
             )
-        )
-    );
+        );
   }
   @override
 

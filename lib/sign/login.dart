@@ -18,15 +18,31 @@ class _loginState extends State<login> {
   String password='';
   String email='';
  GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-
-  late PwResetRequestModel pwrequestModel;
+ late PwResetRequestModel pwrequestModel;
  late LoginRequestModel requestModel;
  @override
- void initState(){
-   super.initState();
-   requestModel = new LoginRequestModel();
-   pwrequestModel = new PwResetRequestModel();
- }
+ int? len;
+  dynamic Val;
+  List<String> sectors=[];
+  List<String> codes=[];
+  void initState() {
+    getsectors();
+    requestModel = new LoginRequestModel();
+    pwrequestModel = new PwResetRequestModel();
+    super.initState();
+  }
+
+  void getsectors()async{
+    APIService  apiService = APIService();
+    await apiService.sector().then((value){
+      len =   value!.data!.flightSector!.sector!.length;
+      Val =   value.data!.flightSector!.sector!;
+    });
+    for(int i=0;i<len!;i++){
+      sectors.add("${Val[i].sectorName.join().toString()}");
+      codes.add("${Val[i].sectorCode.join().toString()}");
+    }
+  }
 
   void pwreset() {
     showDialog(
@@ -332,7 +348,7 @@ class _loginState extends State<login> {
                                             Timer(const Duration(seconds: 5), (){
                                               Navigator.push(context,
                                                     MaterialPageRoute(builder:
-                                                    (context) => HomeScreen(token: l.token.toString(),)
+                                                    (context) => HomeScreen(s:sectors,c: codes,token: l.token.toString(),)
                                                 )
                                             );}
                                         );

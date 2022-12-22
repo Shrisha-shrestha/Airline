@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'model/location_model.dart';
 import 'model/register_model.dart';
 
 class APIService{
@@ -73,6 +74,17 @@ class APIService{
    else if( response.statusCode == 401){
       ProfileResponseModel_failure responseModel = ProfileResponseModel_failure.fromJson(json.decode(response.body));//fromJson ----> firta deko lai user ra token ma map garne or error ma
       return Right(responseModel);    }
+    else{
+      throw Exception('Error fetching data');
+    }
+  }
+  Future<SectorResponseModel? > sector()async{
+  final String url1 = 'http://3.109.218.205/api/v1/essential/getSectors';
+  final response = await http.get(Uri.parse(url1),);
+    if(response.statusCode == 200 ){
+      SectorResponseModel responseModel = SectorResponseModel.fromJson(json.decode(response.body));//fromJson ----> firta deko lai user ra token ma map garne or error ma
+      return responseModel;
+    }
     else{
       throw Exception('Error fetching data');
     }

@@ -3,33 +3,24 @@ import 'package:airline/home/availabletickets.dart';
 import 'package:airline/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 class HomeScreen extends StatefulWidget {
 String token;
-HomeScreen({required this.token});
+List<String> s;
+List<String> c;
+HomeScreen({required this.token,required this.s,required this.c});
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   int? val = -1;
-  String dropdownvalue1 = 'Select Location';
-  String dropdownvalue2 = 'Select Location';
+  String? dropdownvalue1;
+  String? dropdownvalue2;
   String dropdownvalue3 = 'Select Date';
   String dropdownvalue4 = 'Select Date';
   int dropdownvalue5 = 1;
   int dropdownvalue6 = 1;
-
-
-
   var childrens =[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
-
-  var districts =['Select Location','Taplejung', 'Phidim','Ilam', 'Chandragadi', 'Morang', 'Inaruwa', 'Dhankutta', 'Khandbari', 'Bhojpur', 'Terhathum', 'Okhaldunga', 'Diktel',
-    'Solusalleri', 'Gaighat', 'Rajbiraj', 'Siraha', 'Dhanusa', 'Jaleswor', 'Malangwa', 'Sindhuligadi', 'Manthali', 'Charikot', 'Sindhupalchauk', 'Dhulikhel',
-    'Lalitpur', 'Bhaktapur', 'Kathmandu', 'Bidur', 'Dhunche', 'Dhadingbeshi', 'Makwanpur', 'Gaur', 'Bharatpur', 'Gorkha', 'Beshisahar', 'Damauli', 'Putalikhel', 'Pokhara', 'Chame', 'Mustang',
-    'Kusma', 'Baini', 'Baglung', 'Gulmi', 'Tansen', 'Parasi', 'Bhairawa', 'Sandhikarka', 'Taulihawa', 'Pyuthan', 'Libang', 'Musikot', 'Muskikot', 'Salyan',
-    'Ghorahi', 'Birendranagar', 'Nepalgunj', 'Jajarkot', 'Dolpa', 'Simikot', 'Manma', 'Gamgadi', 'Jumla', 'Bajura', 'Chainpur', 'Mangalsen', 'Silgadi', 'Dhangadi', 'Kanchanpur', 'Dadeldhura', 'Baitadi', 'Darchula'];
-
   double? _height;
   double? _width;
   String?  _setDate1,_setDate2;
@@ -66,17 +57,24 @@ class _HomeScreenState extends State<HomeScreen> {
         _dateController2.text = DateFormat.yMd().format(selectedDate2);
       });
   }
-
+  int? len;
   @override
   void initState() {
     _dateController1.text = DateFormat.yMd().format(DateTime.now());
     _dateController2.text = DateFormat.yMd().format(DateTime.now());
+    APIService  apiService = new APIService();
+    apiService.sector().then((value)async{
+      setState(() {
+        len = value!.data!.flightSector!.sector!.length;
+      });
+    });
     super.initState();
   }
 
 
   @override
     Widget build(BuildContext context) {
+    final theMap = Map.fromIterables(widget.s, widget.c);
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
        dateTime = DateFormat.yMd().format(DateTime.now());
@@ -233,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         value: dropdownvalue1,
                         icon: const Icon(Icons.keyboard_arrow_down,color:Color(0xff2699fb) ,),
-                        items: districts.map((String district) {
+                        items: widget.s.map((String district) {
                           return DropdownMenuItem(
                             alignment: Alignment.center,
                             value: district,
@@ -242,6 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }).toList(),
                         onChanged: (String? newValue) {
                           setState(() {
+                            print(theMap);
                             dropdownvalue1 = newValue!;
                           });
                         },
@@ -370,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         value: dropdownvalue2,
                         icon: const Icon(Icons.keyboard_arrow_down,color:Color(0xff2699fb) ,),
-                        items: districts.map((String district) {
+                        items: widget.c.map((String district) {
                           return DropdownMenuItem(
                             alignment: Alignment.center,
                             value: district,
@@ -483,6 +482,7 @@ class _HomeScreenState extends State<HomeScreen> {
                        Container(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextButton(onPressed: (){
+
                 Navigator.push(context,MaterialPageRoute(builder: (context) => flightsearch()));
               },
                   style: TextButton.styleFrom(
