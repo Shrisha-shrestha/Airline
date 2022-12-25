@@ -2,13 +2,18 @@ import 'package:airline/bookinginfo.dart';
 import 'package:airline/sign/login.dart';
 import 'package:flutter/material.dart';
 class flightsearch extends StatefulWidget {
+  List<String>? code;
+  int? l,g,a,c;
+  String? d,r;
+  flightsearch({ this.code,this.l,this.g,this.d,this.r,this.a,this.c});
   @override
   State<flightsearch> createState() => _flightsearchState();
 }
 
-class _flightsearchState extends State<flightsearch> {
+class _flightsearchState extends State<flightsearch>with TickerProviderStateMixin {
   @override
-  Widget build(BuildContext context) {
+     Widget build(BuildContext context) {
+    TabController _tabcontrol = TabController(length: 3, vsync: this);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -47,11 +52,11 @@ class _flightsearchState extends State<flightsearch> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Kathmandu',style: TextStyle(
+                              Text('${widget.code![widget.l!]}',style: TextStyle(
                                 color: Color(0xff2699fb),
                                 fontSize:20.0,
                               ),),
-                              Text('Pokhara',style: TextStyle(
+                              Text('${widget.code![widget.g!]}',style: TextStyle(
                                 color: Color(0xff2699fb),
                                 fontSize:20.0,
                               ),),
@@ -66,14 +71,24 @@ class _flightsearchState extends State<flightsearch> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text('22 Dec, 2022',style: TextStyle(
+                      Text('${widget.d}',style: TextStyle(
                         color: Color(0xff2699fb),
                         fontSize:14.0,
                       ),),
-                      Text('1 Adult',style: TextStyle(
-                        color: Color(0xff2699fb),
-                        fontSize:14.0,
-                      ),),
+                      Row(
+                        children: [
+                          Text('${widget.a} Adult',style: TextStyle(
+                            color: Color(0xff2699fb),
+                            fontSize:14.0,
+                          ),),
+                          if(widget.c!=null)...[
+                            SizedBox(width: 10.0,),
+                            Text('${widget.c} children',style: TextStyle(
+                              color: Color(0xff2699fb),
+                              fontSize:14.0,
+                            ),),                          ]
+                        ],
+                      ),
                     ],
                   ),
                 ],
@@ -86,6 +101,31 @@ class _flightsearchState extends State<flightsearch> {
                   color: Color(0xff2699fb),
                   fontSize: 12.0
               ),),
+            ),
+
+            TabBar(
+              controller: _tabcontrol,
+              labelPadding: EdgeInsets.only(left: 20,right:20),
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.grey,
+              isScrollable: true,
+              indicatorSize: TabBarIndicatorSize.label,
+              overlayColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
+                if (states.contains(MaterialState.selected)) {
+                  return Colors.blue;
+                } if (states.contains(MaterialState.focused)) {
+                  return Colors.orange;
+                } else if (states.contains(MaterialState.hovered)) {
+                  return Colors.pinkAccent;
+                }
+
+                return Colors.transparent;
+              }),
+              tabs: [
+                Tab(text: '21 Dec',),
+                Tab(text: '22 Dec',),
+                Tab(text: '23 Dec',),
+              ],
             ),
 
           Container(

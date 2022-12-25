@@ -14,13 +14,13 @@ HomeScreen({required this.token,required this.s,required this.c});
 
 class _HomeScreenState extends State<HomeScreen> {
   int? val = -1;
-  String? dropdownvalue1;
-  String? dropdownvalue2;
-  String dropdownvalue3 = 'Select Date';
-  String dropdownvalue4 = 'Select Date';
+  int leaving =7 ,going=7;
+  String? dropdownvalue1,dropdownvalue2;
   int dropdownvalue5 = 1;
-  int dropdownvalue6 = 1;
-  var childrens =[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+  int dropdownvalue6 = 0;
+  int? len;
+  var adults =[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+  var childrens =[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
   double? _height;
   double? _width;
   String?  _setDate1,_setDate2;
@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _dateController2.text = DateFormat.yMd().format(selectedDate2);
       });
   }
-  int? len;
+
   @override
   void initState() {
     _dateController1.text = DateFormat.yMd().format(DateTime.now());
@@ -240,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }).toList(),
                         onChanged: (String? newValue) {
                           setState(() {
-                            print(theMap);
+                             leaving=widget.s.indexOf(newValue!);
                             dropdownvalue1 = newValue!;
                           });
                         },
@@ -320,11 +320,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         value: dropdownvalue5,
                         icon: const Icon(Icons.keyboard_arrow_down,color:Color(0xff2699fb) ,),
-                        items: childrens.map((int children) {
+                        items: adults.map((int adult) {
                           return DropdownMenuItem(
                             alignment: Alignment.center,
-                            value: children,
-                            child: Text('${children}',style: TextStyle(color: Color(0xff2699fb),),),
+                            value: adult,
+                            child: Text('${adult}',style: TextStyle(color: Color(0xff2699fb),),),
                           );
                         }).toList(),
                         onChanged: (int? newValue) {
@@ -369,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         value: dropdownvalue2,
                         icon: const Icon(Icons.keyboard_arrow_down,color:Color(0xff2699fb) ,),
-                        items: widget.c.map((String district) {
+                        items: widget.s.map((String district) {
                           return DropdownMenuItem(
                             alignment: Alignment.center,
                             value: district,
@@ -378,6 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }).toList(),
                         onChanged: (String? newValue) {
                           setState(() {
+                            going=widget.s.indexOf(newValue!);
                             dropdownvalue2 = newValue!;
                           });
                         },
@@ -417,7 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           controller: _dateController2,
                           onSaved: (String? val) {
                             _setDate2 = val;
-                          },
+                            },
                           decoration: InputDecoration(
                               disabledBorder:
                               UnderlineInputBorder(borderSide: BorderSide.none),
@@ -482,8 +483,14 @@ class _HomeScreenState extends State<HomeScreen> {
                        Container(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextButton(onPressed: (){
-
-                Navigator.push(context,MaterialPageRoute(builder: (context) => flightsearch()));
+                Navigator.push(context,MaterialPageRoute(builder: (context)      {
+                  return flightsearch(
+                      code:widget.c,
+                      l:leaving,g:going,
+                      d:DateFormat('dd MMM yyyy ').format(selectedDate1),r: DateFormat('dd MMM yyyy ').format(selectedDate2),
+                      a:dropdownvalue5,c: dropdownvalue6,);
+    }
+                ));
               },
                   style: TextButton.styleFrom(
                     backgroundColor:  Color(0xff2699fb), // Background Color
