@@ -1,19 +1,38 @@
-import 'package:airline/bookinginfo.dart';
-import 'package:airline/sign/login.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../widget/flightondate.dart';
+
 class flightsearch extends StatefulWidget {
   List<String>? code;
   int? l,g,a,c;
-  String? d,r;
+  DateTime? d,r;
   flightsearch({ this.code,this.l,this.g,this.d,this.r,this.a,this.c});
   @override
   State<flightsearch> createState() => _flightsearchState();
 }
 
 class _flightsearchState extends State<flightsearch>with TickerProviderStateMixin {
+
+  int _tabIndex = 1;
+  late TabController _tabController;
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this,initialIndex: _tabIndex);
+
+  }
+  void _toggleTabright() {
+    _tabIndex = _tabController.index + 1;
+    _tabController.animateTo(_tabIndex);
+  }
+  void _toggleTableft() {
+    _tabIndex = _tabController.index - 1;
+    _tabController.animateTo(_tabIndex);
+  }
   @override
      Widget build(BuildContext context) {
-    TabController _tabcontrol = TabController(length: 3, vsync: this);
+    DateTime? departure =widget.d;
+    DateTime? ret = widget.r;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -71,7 +90,7 @@ class _flightsearchState extends State<flightsearch>with TickerProviderStateMixi
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text('${widget.d}',style: TextStyle(
+                      Text(DateFormat('dd MMM yyyy ').format(departure!),style: TextStyle(
                         color: Color(0xff2699fb),
                         fontSize:14.0,
                       ),),
@@ -103,31 +122,6 @@ class _flightsearchState extends State<flightsearch>with TickerProviderStateMixi
               ),),
             ),
 
-            TabBar(
-              controller: _tabcontrol,
-              labelPadding: EdgeInsets.only(left: 20,right:20),
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.grey,
-              isScrollable: true,
-              indicatorSize: TabBarIndicatorSize.label,
-              overlayColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
-                if (states.contains(MaterialState.selected)) {
-                  return Colors.blue;
-                } if (states.contains(MaterialState.focused)) {
-                  return Colors.orange;
-                } else if (states.contains(MaterialState.hovered)) {
-                  return Colors.pinkAccent;
-                }
-
-                return Colors.transparent;
-              }),
-              tabs: [
-                Tab(text: '21 Dec',),
-                Tab(text: '22 Dec',),
-                Tab(text: '23 Dec',),
-              ],
-            ),
-
           Container(
             padding: EdgeInsets.only(bottom: 15.0),
               height: 58.0,
@@ -140,38 +134,55 @@ class _flightsearchState extends State<flightsearch>with TickerProviderStateMixi
                      borderRadius: BorderRadius.all(Radius.circular(10)),
                        border: Border.all(width: 2, color:  Color(0xff2699fb).withOpacity(0.3),
                   ),),
-                   child: IconButton(onPressed: (){},
+                   child: IconButton(onPressed: (){
+                     _toggleTableft();
+                   },
                        icon: Icon(Icons.arrow_back_ios_new,color: Color(0xff2699fb),size: 15.0,)),
                  ),
 
-                 Container(
-                   decoration: BoxDecoration(
-                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                     color: Color(0xff2699fb).withOpacity(0.3),
-
-                   ),
-                   width: 60.0,
-                   child: Center(child: Text('21 Dec',style: TextStyle(color: Colors.blue,fontSize: 15.0),)),
+                 TabBar(
+                   controller: _tabController,
+                   labelPadding: EdgeInsets.only(left: 20,right:20),
+                   labelColor: Colors.white,
+                   unselectedLabelColor: Colors.white,
+                   indicatorSize: TabBarIndicatorSize.label,
+                   isScrollable: true,
+                   indicator: BoxDecoration(
+                       borderRadius: BorderRadius.circular(10), // Creates border
+                       color: Colors.blue),
+                   tabs: [
+                     Tab(
+                       child:  Container(
+                         width: 60.0,
+                         decoration: BoxDecoration(
+                           borderRadius: BorderRadius.all(Radius.circular(10)),
+                           color: Color(0xff2699fb).withOpacity(0.5),
+                         ),
+                         child: Center(child: Text(DateFormat('dd MMM').format(departure.subtract(Duration(days:1))),
+                       ),),
+                     ),),
+                     Tab(
+                       child:  Container(
+                         width: 60.0,
+                         decoration: BoxDecoration(
+                           borderRadius: BorderRadius.all(Radius.circular(10)),
+                           color: Color(0xff2699fb).withOpacity(0.5),
+                         ),
+                         child: Center(child: Text(DateFormat('dd MMM').format(departure)
+                         ),),
+                       ),),
+                     Tab(
+                       child:  Container(
+                         width: 60.0,
+                         decoration: BoxDecoration(
+                           borderRadius: BorderRadius.all(Radius.circular(10)),
+                           color: Color(0xff2699fb).withOpacity(0.5),
+                         ),
+                         child: Center(child: Text(DateFormat('dd MMM').format(departure.add(Duration(days:1))),
+                         ),),
+                       ),),
+                   ],
                  ),
-                 Container(
-                   width: 60.0,
-                   decoration: BoxDecoration(
-                     borderRadius: BorderRadius.all(Radius.circular(10)),
-                     color: Color(0xff2699fb),
-                   ),
-                   child: Center(child: Text('22 Dec',
-                     style: TextStyle(color: Colors.white,fontSize: 15.0),)),
-                 ),
-                 Container(
-                   width: 60.0,
-                   decoration: BoxDecoration(
-                     borderRadius: BorderRadius.all(Radius.circular(10)),
-                     color: Color(0xff2699fb).withOpacity(0.3),
-
-                   ),
-                   child: Center(child: Text('23 Dec',style: TextStyle(color: Colors.blue,fontSize: 15.0),)),
-                 ),
-
 
                  Container(
                    width: 50.0,
@@ -179,300 +190,32 @@ class _flightsearchState extends State<flightsearch>with TickerProviderStateMixi
                      borderRadius: BorderRadius.all(Radius.circular(10)),
                      border: Border.all(width: 2, color:  Color(0xff2699fb).withOpacity(0.3),
                      ),),
-                   child: IconButton(onPressed: (){},
+                   child: IconButton(onPressed: (){
+                     _toggleTabright();
+                   },
                        icon: Icon(Icons.arrow_forward_ios,color: Color(0xff2699fb),size: 15.0,)),
                  ),
                ],
              )
           ),
 
+
             Expanded(
               child: Container(
-                child: GestureDetector(
-                  onTap: (){
-
-                    Navigator.push(context,MaterialPageRoute(builder: (context) => bookinginfo()));
-
-                  },
-                  child: ListView(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20.0),
-                        child: Container(
-                          height: 130.0,
-                          color: Color(0xff2699fb).withOpacity(0.1),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Yeti Airlines  (ATR72)',style: TextStyle(
-                                      color: Color(0xff2699fb).withOpacity(0.3),
-                                    ),),
-                                    Text('Rs. 4,100',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                  ],
-                                ),
-
-                                Row(
-                                  children: [
-                                    Text('06:55',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                    Padding(padding: EdgeInsets.symmetric(horizontal: 10.0,),
-                                      child: Icon(Icons.airplanemode_on_rounded,color:Color(0xff2699fb) ,),
-                                    ),
-                                    Text('07:20',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text('25 min',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                    SizedBox(width: 40.0,),
-                                    Text('Class E1',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                  ],
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Total Luggage    20.00KG',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                    Text('Non - Refundable',style: TextStyle(
-                                      color: Color(0xff2699fb).withOpacity(0.3),
-                                    ),),
-                                  ],
-                                ),
-
-
-
-                              ],
+                child: TabBarView(
+                          controller: _tabController,
+                          children: const <Widget>[
+                            Center(
+                              child: flights(),
                             ),
-                          ),
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20.0),
-                        child: Container(
-                          height: 130.0,
-                          color: Color(0xff2699fb).withOpacity(0.1),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Yeti Airlines  (ATR72)',style: TextStyle(
-                                      color: Color(0xff2699fb).withOpacity(0.3),
-                                    ),),
-                                    Text('Rs. 4,100',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                  ],
-                                ),
-
-                                Row(
-                                  children: [
-                                    Text('06:55',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                    Padding(padding: EdgeInsets.symmetric(horizontal: 10.0,),
-                                      child: Icon(Icons.airplanemode_on_rounded,color:Color(0xff2699fb) ,),
-                                    ),
-                                    Text('07:20',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text('25 min',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                    SizedBox(width: 40.0,),
-                                    Text('Class E1',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                  ],
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Total Luggage    20.00KG',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                    Text('Non - Refundable',style: TextStyle(
-                                      color: Color(0xff2699fb).withOpacity(0.3),
-                                    ),),
-                                  ],
-                                ),
-
-
-
-                              ],
+                            Center(
+                              child: flights(),
                             ),
-                          ),
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20.0),
-                        child: Container(
-                          height: 130.0,
-                          color: Color(0xff2699fb).withOpacity(0.1),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Yeti Airlines  (ATR72)',style: TextStyle(
-                                      color: Color(0xff2699fb).withOpacity(0.3),
-                                    ),),
-                                    Text('Rs. 4,100',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                  ],
-                                ),
-
-                                Row(
-                                  children: [
-                                    Text('06:55',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                    Padding(padding: EdgeInsets.symmetric(horizontal: 10.0,),
-                                      child: Icon(Icons.airplanemode_on_rounded,color:Color(0xff2699fb) ,),
-                                    ),
-                                    Text('07:20',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text('25 min',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                    SizedBox(width: 40.0,),
-                                    Text('Class E1',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                  ],
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Total Luggage    20.00KG',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                    Text('Non - Refundable',style: TextStyle(
-                                      color: Color(0xff2699fb).withOpacity(0.3),
-                                    ),),
-                                  ],
-                                ),
-
-
-
-                              ],
+                            Center(
+                              child: flights(),
                             ),
-                          ),
+                          ],
                         ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20.0),
-                        child: Container(
-                          height: 130.0,
-                          color: Color(0xff2699fb).withOpacity(0.1),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Yeti Airlines  (ATR72)',style: TextStyle(
-                                      color: Color(0xff2699fb).withOpacity(0.3),
-                                    ),),
-                                    Text('Rs. 4,100',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                  ],
-                                ),
-
-                                Row(
-                                  children: [
-                                    Text('06:55',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                    Padding(padding: EdgeInsets.symmetric(horizontal: 10.0,),
-                                      child: Icon(Icons.airplanemode_on_rounded,color:Color(0xff2699fb) ,),
-                                    ),
-                                    Text('07:20',style: TextStyle(
-                                        color: Color(0xff2699fb),fontSize: 15.0,fontWeight: FontWeight.bold
-                                    ),),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text('25 min',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                    SizedBox(width: 40.0,),
-                                    Text('Class E1',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                  ],
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Total Luggage    20.00KG',style: TextStyle(
-                                      color: Color(0xff2699fb),fontSize: 15,
-                                    ),),
-                                    Text('Non - Refundable',style: TextStyle(
-                                      color: Color(0xff2699fb).withOpacity(0.3),
-                                    ),),
-                                  ],
-                                ),
-
-
-
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-
-
-                    ],
-                  ),
-                ),
               ),
             ),
 

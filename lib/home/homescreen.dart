@@ -483,14 +483,22 @@ class _HomeScreenState extends State<HomeScreen> {
                        Container(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextButton(onPressed: (){
-                Navigator.push(context,MaterialPageRoute(builder: (context)      {
+                if (selectedDate1.compareTo(selectedDate2) == 0 || selectedDate1.compareTo(selectedDate2) < 0){
+                  Navigator.push(context,MaterialPageRoute(builder: (context)      {
                   return flightsearch(
                       code:widget.c,
                       l:leaving,g:going,
-                      d:DateFormat('dd MMM yyyy ').format(selectedDate1),r: DateFormat('dd MMM yyyy ').format(selectedDate2),
+                      d:selectedDate1,r:selectedDate2,
                       a:dropdownvalue5,c: dropdownvalue6,);
     }
                 ));
+                }
+                else{
+                  final snackBar = SnackBar(
+                    backgroundColor: Color(0xff2699fb),
+                    content:Text('Choose return date later than departure date'));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
               },
                   style: TextButton.styleFrom(
                     backgroundColor:  Color(0xff2699fb), // Background Color
